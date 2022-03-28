@@ -37,7 +37,7 @@ class R2dbcItemRepository(
             .last()
     }
 
-    override fun getById(id: String): Mono<Item> {
+    override fun getById(todolistId: Long, id: String): Mono<Item> {
         TODO("Not yet implemented")
     }
 
@@ -52,7 +52,7 @@ class R2dbcItemRepository(
         TODO("Not yet implemented")
     }
 
-    override fun delete(id: String) {
+    override fun delete(todolistId: Long, id: String): Mono<Int> {
         TODO("Not yet implemented")
     }
 }

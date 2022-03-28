@@ -24,4 +24,13 @@ class ItemService(
         return itemRepository.getAllByTodolistId(todolistId)
             .map { it.toItemOutputDto() }
     }
+
+    fun find(todolistId: Long, id: String): Mono<ItemOutputDto> {
+        return itemRepository.getById(todolistId, id)
+            .map { it.toItemOutputDto() }
+    }
+
+    fun remove(todolistId: Long, id: String): Mono<Int> {
+        return itemRepository.delete(todolistId, id)
+    }
 }

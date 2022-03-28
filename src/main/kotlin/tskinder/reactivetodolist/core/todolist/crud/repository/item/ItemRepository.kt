@@ -10,13 +10,13 @@ interface ItemRepository : AbstractRepository {
 
     fun save(item: CreatedItem): Mono<Item>
 
-    fun getById(id: String): Mono<Item>
+    fun getById(todolistId: Long, id: String): Mono<Item>
 
     fun getAllByTodolistId(todolistId: Long): Flux<Item>
 
     fun update(item: UpdatedItem): Mono<Item>
 
-    fun delete(id: String)
+    fun delete(todolistId: Long, id: String): Mono<Int>
 
     fun resultToItem(row: Row): Item {
         return Item(
