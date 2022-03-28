@@ -1,0 +1,7 @@
+curl http://localhost:8080/api/todolist/1 | jq
+
+curl -X POST -H "Content-type: application/json" -d '{"name": "nowa lista"}' http://localhost:8080/api/todolist | jq
+
+curl -X POST -H "Content-type: application/json" -d '{"content": "Zadanie numer 1"}' http://localhost:8080/api/todolist/1/item | jq
+
+curl -X POST -H "Content-type: application/json" -d '{"content": "Zadanie numer XX", "deadline": "2022-05-27T19:00:00.000000Z"}' http://localhost:8080/api/todolist/1/item | jq
