@@ -1,9 +1,10 @@
-package tskinder.reactivetodolist.core.todolist.crud.repository.item
+package tskinder.reactivetodolist.core.todolist.crud.repository
 
 import java.time.Instant
+import java.util.UUID
 
 data class Item(
-    val id: String,
+    val id: UUID,
     val content: String,
     val status: String,
     val creationDate: Instant,

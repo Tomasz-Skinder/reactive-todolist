@@ -1,10 +1,10 @@
-package tskinder.reactivetodolist.core.todolist.crud.repository.item
+package tskinder.reactivetodolist.core.todolist.crud.repository
 
 import io.r2dbc.spi.Row
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import tskinder.reactivetodolist.core.todolist.crud.repository.AbstractRepository
 import java.time.Instant
+import java.util.UUID
 
 interface ItemRepository : AbstractRepository {
 
@@ -14,13 +14,13 @@ interface ItemRepository : AbstractRepository {
 
     fun getAllByTodolistId(todolistId: Long): Flux<Item>
 
-    fun update(item: UpdatedItem): Mono<Item>
+    fun update(id: String, item: UpdatedItem)
 
     fun delete(todolistId: Long, id: String): Mono<Int>
 
     fun resultToItem(row: Row): Item {
         return Item(
-            id = getOrThrow(row, "id", String::class.java),
+            id = getOrThrow(row, "id", UUID::class.java),
             content = getOrThrow(row, "content", String::class.java),
             status = getOrThrow(row, "status", String::class.java),
             creationDate = getOrThrow(row, "creation_date", Instant::class.java),
@@ -40,6 +40,7 @@ data class CreatedItem(
 )
 
 data class UpdatedItem(
-    //TODO
-    val content: String
+    val content: String,
+    val modificationDate: Instant,
+    val deadline: Instant?
 )

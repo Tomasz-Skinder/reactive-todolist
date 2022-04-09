@@ -1,20 +1,18 @@
-package tskinder.reactivetodolist.core.todolist.crud.repository.todolist
+package tskinder.reactivetodolist.core.todolist.crud.repository.r2dbc.postgresdrvier
 
 import io.r2dbc.spi.Connection
 import io.r2dbc.spi.ConnectionFactory
 import io.r2dbc.spi.Row
 import org.reactivestreams.Publisher
-import org.springframework.context.annotation.Primary
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Repository
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import tskinder.reactivetodolist.core.todolist.crud.repository.AbstractRepository
-import tskinder.reactivetodolist.core.todolist.crud.repository.GET_TODOLIST_BY_ID
-import tskinder.reactivetodolist.core.todolist.crud.repository.INSERT_TODOLIST
+import tskinder.reactivetodolist.core.todolist.crud.repository.*
 
+@Profile("postgres")
 @Repository
-class R2dbcTodolistRepository(
+class PostgresTodolistRepository(
     connectionFactory: ConnectionFactory
 ) : TodolistRepository, AbstractRepository {
 

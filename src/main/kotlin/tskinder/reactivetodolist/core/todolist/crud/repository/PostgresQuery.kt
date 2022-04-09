@@ -16,6 +16,10 @@ const val INSERT_ITEM = """
     RETURNING id, content, status, creation_date, modification_date, deadline, todolist_id
     """
 
+const val UPDATE_ITEM_CONTENT = """UPDATE item SET content = $1, modification_date = $2 WHERE item.id = $3"""
+
+const val UPDATE_ITEM_DATES = """UPDATE item SET modification_date = $1, deadline = $2 WHERE item.id = $3"""
+
 const val DBC_GET_ITEM_BY_ID = """
     SELECT id, content, status, creation_date, modification_date, deadline, todolist_id
     FROM item

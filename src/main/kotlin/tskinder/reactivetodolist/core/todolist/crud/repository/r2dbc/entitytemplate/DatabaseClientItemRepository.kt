@@ -1,20 +1,15 @@
-package tskinder.reactivetodolist.core.todolist.crud.repository.item
+package tskinder.reactivetodolist.core.todolist.crud.repository.r2dbc.entitytemplate
 
 import org.springframework.context.annotation.Profile
 import org.springframework.r2dbc.core.DatabaseClient
-import org.springframework.r2dbc.core.awaitOne
-import org.springframework.r2dbc.core.awaitRowsUpdated
 import org.springframework.stereotype.Repository
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import tskinder.reactivetodolist.core.todolist.crud.repository.DBC_DELETE_ITEM
-import tskinder.reactivetodolist.core.todolist.crud.repository.DBC_GET_ITEM_BY_ID
-import tskinder.reactivetodolist.core.todolist.crud.repository.DBC_GET_TODOLIST_BY_ID
-import tskinder.reactivetodolist.core.todolist.crud.repository.DBC_INSERT_ITEM
+import tskinder.reactivetodolist.core.todolist.crud.repository.*
 import java.time.Instant
 import java.util.UUID
 
-@Profile("spring")
+@Profile("dbclient")
 @Repository
 class DatabaseClientItemRepository(
     private val databaseClient: DatabaseClient
@@ -49,7 +44,7 @@ class DatabaseClientItemRepository(
             .all()
     }
 
-    override fun update(item: UpdatedItem): Mono<Item> {
+    override fun update(id: String, item: UpdatedItem) {
         TODO("Not yet implemented")
     }
 

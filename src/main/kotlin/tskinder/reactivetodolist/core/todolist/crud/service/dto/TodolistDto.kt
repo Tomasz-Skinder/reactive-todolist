@@ -1,7 +1,7 @@
 package tskinder.reactivetodolist.core.todolist.crud.service.dto
 
-import tskinder.reactivetodolist.core.todolist.crud.repository.item.Item
-import tskinder.reactivetodolist.core.todolist.crud.repository.todolist.Todolist
+import tskinder.reactivetodolist.core.todolist.crud.repository.Item
+import tskinder.reactivetodolist.core.todolist.crud.repository.Todolist
 
 data class TodolistInputDto(val name: String)
 

@@ -1,9 +1,2 @@
-spring:
-  webflux:
-    base-path: /api
-  r2dbc:
-    url: r2dbc:postgresql://localhost:5432/postgres
-    username: postgres
-    password: postgres
-
-vteNum: 54
+webflux:
+  base-path: /api

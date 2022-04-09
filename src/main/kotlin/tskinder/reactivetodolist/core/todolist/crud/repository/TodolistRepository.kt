@@ -1,4 +1,4 @@
-package tskinder.reactivetodolist.core.todolist.crud.repository.todolist
+package tskinder.reactivetodolist.core.todolist.crud.repository
 
 import reactor.core.publisher.Mono
 

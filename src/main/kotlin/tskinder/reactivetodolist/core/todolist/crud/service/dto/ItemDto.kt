@@ -1,6 +1,8 @@
-import tskinder.reactivetodolist.core.todolist.crud.repository.item.CreatedItem
-import tskinder.reactivetodolist.core.todolist.crud.repository.item.Item
+import tskinder.reactivetodolist.core.todolist.crud.repository.CreatedItem
+import tskinder.reactivetodolist.core.todolist.crud.repository.Item
+import tskinder.reactivetodolist.core.todolist.crud.repository.UpdatedItem
 import java.time.Instant
+import java.time.Instant.now
 
 data class ItemInputDto(
     val content: String,
@@ -28,7 +30,7 @@ fun ItemInputDto.toCreatedItem(todolistId: Long): CreatedItem {
     return CreatedItem(
         content = content,
         status = ItemStatus.PENDING.name,
-        creationDate = Instant.now(),
+        creationDate = now(),
         deadline = deadline,
         todolistId = todolistId
     )
@@ -36,10 +38,18 @@ fun ItemInputDto.toCreatedItem(todolistId: Long): CreatedItem {
 
 fun Item.toItemOutputDto(): ItemOutputDto {
     return ItemOutputDto(
-        id = id,
+        id = id.toString(),
         content = content,
         timeline = Timeline(creationDate, modificationDate, deadline),
         status = ItemStatus.valueOf(status)
+    )
+}
+
+fun ItemInputDto.toUpdatedItem(): UpdatedItem {
+    return UpdatedItem(
+        content = content,
+        modificationDate = now(),
+        deadline = deadline
     )
 }
 
