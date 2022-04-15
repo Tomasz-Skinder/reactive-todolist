@@ -3,6 +3,7 @@ package tskinder.reactivetodolist.core.todolist.crud.controller
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Mono
+import tskinder.reactivetodolist.core.todolist.crud.config.TodolistId
 import tskinder.reactivetodolist.core.todolist.crud.service.TodolistService
 import tskinder.reactivetodolist.core.todolist.crud.service.dto.TodolistInputDto
 import tskinder.reactivetodolist.core.todolist.crud.service.dto.TodolistOutputDto
@@ -15,7 +16,7 @@ class TodolistEndpoint(
 
     @PostMapping
     @ResponseStatus(CREATED)
-    fun create(@RequestBody request: TodolistInputDto): Mono<TodolistOutputDto> {
+    fun create(@RequestBody request: TodolistInputDto): Mono<TodolistId> {
         return todolistService.create(request)
     }
 

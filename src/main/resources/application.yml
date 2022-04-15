@@ -1,2 +1,3 @@
-webflux:
-  base-path: /api
+spring:
+  webflux:
+    base-path: /api

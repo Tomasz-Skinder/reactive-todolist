@@ -8,15 +8,15 @@ import java.util.UUID
 
 interface ItemRepository : AbstractRepository {
 
-    fun save(item: CreatedItem): Mono<Item>
+    fun save(item: CreatedItem): Mono<UUID>
 
-    fun getById(todolistId: Long, id: String): Mono<Item>
+    fun getById(todolistId: Long, id: UUID): Mono<Item>
 
     fun getAllByTodolistId(todolistId: Long): Flux<Item>
 
-    fun update(id: String, item: UpdatedItem)
+    fun update(id: UUID, item: UpdatedItem): Mono<UUID>
 
-    fun delete(todolistId: Long, id: String): Mono<Int>
+    fun delete(todolistId: Long, id: UUID): Mono<Int>
 
     fun resultToItem(row: Row): Item {
         return Item(

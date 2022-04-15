@@ -1,3 +1,5 @@
+import tskinder.reactivetodolist.core.todolist.crud.config.ItemId
+import tskinder.reactivetodolist.core.todolist.crud.config.TodolistId
 import tskinder.reactivetodolist.core.todolist.crud.repository.CreatedItem
 import tskinder.reactivetodolist.core.todolist.crud.repository.Item
 import tskinder.reactivetodolist.core.todolist.crud.repository.UpdatedItem
@@ -10,7 +12,7 @@ data class ItemInputDto(
 )
 
 data class ItemOutputDto(
-    val id: String,
+    val id: ItemId,
     val content: String,
     val timeline: Timeline,
     val status: ItemStatus
@@ -26,7 +28,7 @@ enum class ItemStatus {
     PENDING, DONE, EXPIRED, CANCELED
 }
 
-fun ItemInputDto.toCreatedItem(todolistId: Long): CreatedItem {
+fun ItemInputDto.toCreatedItem(todolistId: TodolistId): CreatedItem {
     return CreatedItem(
         content = content,
         status = ItemStatus.PENDING.name,
@@ -38,7 +40,7 @@ fun ItemInputDto.toCreatedItem(todolistId: Long): CreatedItem {
 
 fun Item.toItemOutputDto(): ItemOutputDto {
     return ItemOutputDto(
-        id = id.toString(),
+        id = id,
         content = content,
         timeline = Timeline(creationDate, modificationDate, deadline),
         status = ItemStatus.valueOf(status)

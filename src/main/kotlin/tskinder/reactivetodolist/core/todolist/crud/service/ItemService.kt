@@ -8,6 +8,8 @@ import reactor.core.publisher.Mono
 import toCreatedItem
 import toItemOutputDto
 import toUpdatedItem
+import tskinder.reactivetodolist.core.todolist.crud.config.ItemId
+import tskinder.reactivetodolist.core.todolist.crud.config.TodolistId
 import tskinder.reactivetodolist.core.todolist.crud.repository.ItemRepository
 
 @Service
@@ -15,10 +17,8 @@ class ItemService(
     private val itemRepository: ItemRepository
 ) {
 
-    fun create(todolistId: Long, item: ItemInputDto): Mono<ItemOutputDto> {
-        val createdItem = item.toCreatedItem(todolistId)
-        return itemRepository.save(createdItem)
-            .map { it.toItemOutputDto() }
+    fun create(todolistId: TodolistId, item: ItemInputDto): Mono<ItemId> {
+        return itemRepository.save(item.toCreatedItem(todolistId))
     }
 
     fun findAllByTodolistId(todolistId: Long): Flux<ItemOutputDto> {
@@ -26,16 +26,16 @@ class ItemService(
             .map { it.toItemOutputDto() }
     }
 
-    fun find(todolistId: Long, id: String): Mono<ItemOutputDto> {
+    fun find(todolistId: Long, id: ItemId): Mono<ItemOutputDto> {
         return itemRepository.getById(todolistId, id)
             .map { it.toItemOutputDto() }
     }
 
-    fun update(id: String, item: ItemInputDto) {
-        itemRepository.update(id, item.toUpdatedItem())
+    fun update(id: ItemId, item: ItemInputDto): Mono<ItemId> {
+        return itemRepository.update(id, item.toUpdatedItem())
     }
 
-    fun remove(todolistId: Long, id: String): Mono<Int> {
+    fun remove(todolistId: Long, id: ItemId): Mono<Int> {
         return itemRepository.delete(todolistId, id)
     }
 }

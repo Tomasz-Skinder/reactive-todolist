@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import tskinder.reactivetodolist.core.todolist.crud.config.ItemId
+import tskinder.reactivetodolist.core.todolist.crud.config.TodolistId
 import tskinder.reactivetodolist.core.todolist.crud.service.ItemService
 
 @RestController
@@ -24,7 +26,7 @@ class ItemEndpoint(
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    fun create(@PathVariable todolistId: Long, @RequestBody request: ItemInputDto): Mono<ItemOutputDto> {
+    fun create(@PathVariable todolistId: TodolistId, @RequestBody request: ItemInputDto): Mono<ItemId> {
         return itemService.create(todolistId, request)
     }
 
@@ -34,17 +36,18 @@ class ItemEndpoint(
     }
 
     @GetMapping("/{id}")
-    fun find(@PathVariable todolistId: Long, @PathVariable id: String): Mono<ItemOutputDto> {
+    fun find(@PathVariable todolistId: Long, @PathVariable id: ItemId): Mono<ItemOutputDto> {
         return itemService.find(todolistId, id)
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PutMapping("/{id}")
-    fun update(@PathVariable id: String, @RequestBody request: ItemInputDto) {
-        itemService.update(id, request)
+    fun update(@PathVariable id: ItemId, @RequestBody request: ItemInputDto): Mono<ItemId> {
+        return itemService.update(id, request)
     }
 
     @DeleteMapping("/{id}")
-    fun delete(@PathVariable todolistId: Long, @PathVariable id: String): Mono<Int> {
+    fun delete(@PathVariable todolistId: Long, @PathVariable id: ItemId): Mono<Int> {
         return itemService.remove(todolistId, id)
     }
 }

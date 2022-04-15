@@ -2,28 +2,29 @@ package tskinder.reactivetodolist.core.todolist.crud.repository.r2dbc.postgresdr
 
 import io.r2dbc.spi.Connection
 import io.r2dbc.spi.ConnectionFactory
-import io.r2dbc.spi.Statement
-import org.reactivestreams.Publisher
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Repository
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import tskinder.reactivetodolist.core.todolist.crud.repository.*
+import tskinder.reactivetodolist.core.todolist.crud.repository.r2dbc.postgresdrvier.PostgresQuery.DELETE_ITEM_BY_ID
+import tskinder.reactivetodolist.core.todolist.crud.repository.r2dbc.postgresdrvier.PostgresQuery.GET_ITEMS_BY_TODOLIST_ID
+import tskinder.reactivetodolist.core.todolist.crud.repository.r2dbc.postgresdrvier.PostgresQuery.GET_ITEM_BY_ID
+import tskinder.reactivetodolist.core.todolist.crud.repository.r2dbc.postgresdrvier.PostgresQuery.INSERT_ITEM
+import tskinder.reactivetodolist.core.todolist.crud.repository.r2dbc.postgresdrvier.PostgresQuery.UPDATE_ITEM_CONTENT
 import java.time.Instant
 import java.util.UUID
 
 @Profile("postgres")
 @Repository
 class PostgresItemRepository(
-    connectionFactory: ConnectionFactory
+    private val connectionFactory: ConnectionFactory
 ) : ItemRepository {
 
-    private val connection: Publisher<out Connection> = connectionFactory.create()
+    private val connection: Flux<Connection> = Flux.from(connectionFactory.create())
 
-    private val monoConnection: Mono<Connection> = Mono.from(connectionFactory.create())
-
-    override fun save(item: CreatedItem): Mono<Item> {
-        return Flux.from(connection)
+    override fun save(item: CreatedItem): Mono<UUID> {
+        return connection
             .map {
                 it.createStatement(INSERT_ITEM)
                     .bind("$1", item.content)
@@ -33,16 +34,28 @@ class PostgresItemRepository(
                     .bind("$5", item.todolistId)
             }
             .flatMap { it.execute() }
-            .flatMap { it.map { row, _ -> resultToItem(row) } }
+            .flatMap {
+                it.map { row, _ -> getOrThrow(row, "id", UUID::class.java) }
+            }
             .last()
     }
 
-    override fun getById(todolistId: Long, id: String): Mono<Item> {
-        TODO("Not yet implemented")
+    override fun getById(todolistId: Long, id: UUID): Mono<Item> {
+        return connection
+            .map {
+                it.createStatement(GET_ITEM_BY_ID)
+                    .bind("$1", id)
+                    .bind("$2", todolistId)
+            }
+            .flatMap { it.execute() }
+            .flatMap {
+                it.map { row, _ -> resultToItem(row) }
+            }
+            .last()
     }
 
     override fun getAllByTodolistId(todolistId: Long): Flux<Item> {
-        return Flux.from(connection)
+        return connection
             .map {
                 it.createStatement(GET_ITEMS_BY_TODOLIST_ID)
                     .bind("$1", todolistId)
@@ -51,9 +64,8 @@ class PostgresItemRepository(
             .flatMap { it.map { row, _ -> resultToItem(row) } }
     }
 
-    override fun update(id: String, item: UpdatedItem) {
-
-        Flux.from(connection)
+    override fun update(id: UUID, item: UpdatedItem): Mono<UUID> {
+        return connection
             .map {
                 it.beginTransaction()
                 it.setAutoCommit(true)
@@ -63,22 +75,23 @@ class PostgresItemRepository(
                 it.createStatement(UPDATE_ITEM_CONTENT)
                     .bind("$1", item.content)
                     .bind("$2", item.modificationDate)
-                    .bind("$3", UUID.fromString(id))
+                    .bindIfNotNull("$3", item.deadline, Instant::class.java)
+                    .bind("$4", id)
+            }
+            .flatMap { it.execute() }
+            .flatMap { it.map { row, _ -> getOrThrow(row, "id", UUID::class.java) } }
+            .last()
+    }
+
+    override fun delete(todolistId: Long, id: UUID): Mono<Int> {
+        return connection
+            .map {
+                it.createStatement(DELETE_ITEM_BY_ID)
+                    .bind("$1", id)
+                    .bind("$2", todolistId)
             }
             .flatMap { it.execute() }
             .flatMap { it.rowsUpdated }
-            .subscribe()
-    }
-
-    override fun delete(todolistId: Long, id: String): Mono<Int> {
-        TODO("Not yet implemented")
-    }
-}
-
-fun <V> Statement.bindIfNotNull(index: String, value: Any?, type: Class<V>): Statement {
-    return if (value != null) {
-        bind(index, value)
-    } else {
-        bindNull(index, type)
+            .last()
     }
 }

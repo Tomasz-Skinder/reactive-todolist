@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Profile
 @Configuration
 class ConfigureConnection {
 
-    val connectionFactory: PostgresqlConnectionFactory = PostgresqlConnectionFactory(
+    private val connectionFactory: PostgresqlConnectionFactory = PostgresqlConnectionFactory(
         PostgresqlConnectionConfiguration.builder()
             .host("localhost")
             .port(5432)
@@ -22,6 +22,7 @@ class ConfigureConnection {
     )
 
     @Bean
+    @Profile("postgres")
     fun getConnectionFactory(): ConnectionFactory {
         return connectionFactory
     }
