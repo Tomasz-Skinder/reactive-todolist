@@ -5,7 +5,6 @@ import org.springframework.context.annotation.Profile
 import org.springframework.r2dbc.core.DatabaseClient
 import org.springframework.r2dbc.core.ExecuteFunction
 import org.springframework.stereotype.Repository
-import org.springframework.transaction.annotation.Transactional
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import tskinder.reactivetodolist.core.todolist.crud.repository.CreatedItem
@@ -22,21 +21,23 @@ import java.util.UUID
 
 @Profile("r2dbc")
 @Repository
-@Transactional
 class PostgresItemRepository(
     private val client: DatabaseClient
 ) : ItemRepository {
 
     override fun save(item: CreatedItem): Mono<UUID> {
         return client.sql(INSERT_ITEM)
-            .filter { s: Statement, next: ExecuteFunction -> next.execute(s.returnGeneratedValues("id")) }
+            .filter { s: Statement, next: ExecuteFunction ->
+                next.execute(s.returnGeneratedValues("id"))
+            }
             .bind("content", item.content)
             .bind("status", item.status)
             .bind("creationDate", item.creationDate)
             .bindIfNotNull("deadline", item.deadline, Instant::class.java)
             .bind("todolistId", item.todolistId)
-            .map { row, _ -> row.get("id", UUID::class.java) }
+            .fetch()
             .one()
+            .map { row -> row["id"] as UUID }
     }
 
     override fun getById(todolistId: Long, id: UUID): Mono<Item> {
@@ -44,7 +45,7 @@ class PostgresItemRepository(
             .sql(GET_ITEM_BY_ID)
             .bind("todolistId", todolistId)
             .bind("id", id)
-            .map { row, _ -> resultToItem(row) }
+            .map { row -> resultToItem(row) }
             .one()
     }
 
@@ -53,7 +54,7 @@ class PostgresItemRepository(
             .sql(GET_ITEMS_BY_TODOLIST_ID)
             .bind("todolistId", todolistId)
             .filter { statement -> statement.fetchSize(2) }
-            .map { row, _ -> resultToItem(row) }
+            .map { row -> resultToItem(row) }
             .all()
     }
 
@@ -64,7 +65,7 @@ class PostgresItemRepository(
             .bind("modificationDate", item.modificationDate)
             .bindIfNotNull("deadline", item.deadline, Instant::class.java)
             .bind("id", id)
-            .map { row, _ -> row.get("id", UUID::class.java) }
+            .map { row -> row.get("id", UUID::class.java) }
             .one()
     }
 

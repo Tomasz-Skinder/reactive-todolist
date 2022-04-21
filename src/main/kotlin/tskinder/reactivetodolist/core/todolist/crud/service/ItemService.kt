@@ -3,6 +3,7 @@ package tskinder.reactivetodolist.core.todolist.crud.service
 import ItemInputDto
 import ItemOutputDto
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import toCreatedItem
@@ -13,6 +14,7 @@ import tskinder.reactivetodolist.core.todolist.crud.config.TodolistId
 import tskinder.reactivetodolist.core.todolist.crud.repository.ItemRepository
 
 @Service
+@Transactional
 class ItemService(
     private val itemRepository: ItemRepository
 ) {
@@ -26,7 +28,7 @@ class ItemService(
             .map { it.toItemOutputDto() }
     }
 
-    fun find(todolistId: Long, id: ItemId): Mono<ItemOutputDto> {
+    fun find(todolistId: TodolistId, id: ItemId): Mono<ItemOutputDto> {
         return itemRepository.getById(todolistId, id)
             .map { it.toItemOutputDto() }
     }
@@ -35,7 +37,7 @@ class ItemService(
         return itemRepository.update(id, item.toUpdatedItem())
     }
 
-    fun remove(todolistId: Long, id: ItemId): Mono<Int> {
+    fun remove(todolistId: TodolistId, id: ItemId): Mono<Int> {
         return itemRepository.delete(todolistId, id)
     }
 }

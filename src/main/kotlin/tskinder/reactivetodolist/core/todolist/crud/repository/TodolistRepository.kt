@@ -2,11 +2,10 @@ package tskinder.reactivetodolist.core.todolist.crud.repository
 
 import io.r2dbc.spi.Row
 import reactor.core.publisher.Mono
-import tskinder.reactivetodolist.core.todolist.crud.config.TodolistId
 
 interface TodolistRepository : AbstractRepository {
 
-    fun save(name: String): Mono<TodolistId>
+    fun save(name: String): Mono<Long>
 
     fun getById(id: Long): Mono<Todolist>
 

@@ -9,12 +9,15 @@ import tskinder.reactivetodolist.core.todolist.crud.config.TodolistId
 import tskinder.reactivetodolist.core.todolist.crud.repository.Todolist
 import tskinder.reactivetodolist.core.todolist.crud.repository.TodolistRepository
 import java.sql.ResultSet
+import javax.sql.DataSource
 
 @Profile("jdbc")
 @Repository
 class PostgresTodolistRepository(
-    private val jdbcTemplate: NamedParameterJdbcTemplate
+    private val dataSource: DataSource
 ) : TodolistRepository {
+
+    val jdbcTemplate = NamedParameterJdbcTemplate(dataSource)
 
     override fun save(name: String): Mono<TodolistId> {
         val sql = "INSERT INTO todolist (name) VALUES (:name) RETURNING id"
